@@ -25,8 +25,8 @@ func NewServer(cfg *Config, parser *packet.Parser) network.Server {
 	g := nbio.NewEngine(nbio.Config{
 		Network:            "tcp",
 		Addrs:              []string{cfg.Address},
-		ReadBufferSize:     4096,
-		MaxWriteBufferSize: 4096,
+		ReadBufferSize:     cfg.ReadBuf,
+		MaxWriteBufferSize: cfg.SendBuf,
 	})
 	s := &nbioServer{
 		id:        uuid.New().String(),
@@ -123,7 +123,7 @@ func (s *nbioServer) onData(c *nbio.Conn, data []byte) {
 		}
 		return
 	}
-	go s.handler.OnReceived(conn, p)
+	s.handler.OnReceived(conn, p)
 }
 
 func (s *nbioServer) parseConn(c *nbio.Conn) *nbioConn {
