@@ -42,7 +42,10 @@ func NewSimplePacket(body []byte) *SimplePacket {
 
 func (p *SimplePacket) UnPackFrom(r io.Reader) (err error) {
 	opt := simpleOpt
-	bio := bufio.NewReader(r)
+	bio, ok := r.(*bufio.Reader)
+	if !ok {
+		bio = bufio.NewReader(r)
+	}
 	packetLen := opt.bodyLenSize
 	buf, _ := bio.Peek(packetLen)
 	if len(buf) < packetLen {
@@ -70,21 +73,19 @@ func (p *SimplePacket) UnPackFrom(r io.Reader) (err error) {
 }
 
 func (p *SimplePacket) PackTo(w io.Writer) (err error) {
-	bio := bufio.NewWriter(w)
 	opt := simpleOpt
 	buf := make([]byte, opt.bodyLenSize)
 	binary.BigEndian.PutUint32(buf, p.bodyLen)
-	_, err = bio.Write(buf)
+	_, err = w.Write(buf)
 	if err != nil {
 		return
 	}
 	if len(p.body) > 0 {
-		_, err = bio.Write(p.body)
+		_, err = w.Write(p.body)
 		if err != nil {
 			return
 		}
 	}
-	err = bio.Flush()
 	return
 }
 

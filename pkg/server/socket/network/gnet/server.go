@@ -38,8 +38,8 @@ func (s *gnetServer) Start() (err error) {
 			err = gnet.Run(s, s.cfg.Address,
 				gnet.WithMulticore(s.cfg.Multicore),
 				gnet.WithReuseAddr(true),
-				gnet.WithSocketSendBuffer(s.cfg.SendBuf),
-				gnet.WithSocketRecvBuffer(s.cfg.ReadBuf),
+				//gnet.WithSocketSendBuffer(s.cfg.SendBuf),
+				//gnet.WithSocketRecvBuffer(s.cfg.ReadBuf),
 			)
 			if err != nil {
 				panic(err)
@@ -60,12 +60,12 @@ func (s *gnetServer) SetHandler(handler network.Handler) {
 
 func (s gnetServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	s.eng = eng
-	go func() {
-		for {
-			time.Sleep(time.Second * 5)
-			log.Infof("connection count: %d", s.eng.CountConnections())
-		}
-	}()
+	//go func() {
+	//	for {
+	//		time.Sleep(time.Second * 5)
+	//		log.Infof("connection count: %d", s.eng.CountConnections())
+	//	}
+	//}()
 	return
 }
 
