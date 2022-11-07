@@ -39,8 +39,8 @@ func NewServer(cfg *Config, parser *packet.Parser) network.Server {
 	}
 	g.OnOpen(s.onOpen)
 	g.OnClose(s.onClose)
-	//g.OnRead(s.onRead)
-	g.OnData(s.onData)
+	g.OnRead(s.onRead)
+	//g.OnData(s.onData)
 	return s
 
 }
@@ -96,9 +96,7 @@ func (s *nbioServer) onRead(c *nbio.Conn) {
 	}
 
 	for {
-		c.Lock()
 		p, err := conn.Read()
-		c.Unlock()
 		if err != nil {
 			if err != packet.ErrInvalidPacket {
 				log.Errorf("reader error: %v", err)
