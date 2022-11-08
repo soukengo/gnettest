@@ -1,7 +1,6 @@
 package nbio
 
 import (
-	"bytes"
 	log "github.com/golang/glog"
 	"github.com/google/uuid"
 	"github.com/lesismal/nbio"
@@ -39,8 +38,7 @@ func NewServer(cfg *Config, parser *packet.Parser) network.Server {
 	}
 	g.OnOpen(s.onOpen)
 	g.OnClose(s.onClose)
-	g.OnRead(s.onRead)
-	//g.OnData(s.onData)
+	g.OnData(s.onData)
 	return s
 
 }
@@ -88,13 +86,13 @@ func (s *nbioServer) onClose(c *nbio.Conn, err error) {
 	s.handler.OnDisConnect(conn)
 }
 
-func (s *nbioServer) onRead(c *nbio.Conn) {
+func (s *nbioServer) onData(c *nbio.Conn, data []byte) {
 	conn := s.parseConn(c)
 	if conn == nil {
 		c.Close()
 		return
 	}
-
+	conn.buf.Write(data)
 	for {
 		p, err := conn.Read()
 		if err != nil {
@@ -104,24 +102,8 @@ func (s *nbioServer) onRead(c *nbio.Conn) {
 			return
 		}
 		s.handler.OnReceived(conn, p)
-		//time.Sleep(time.Second)
 	}
-}
 
-func (s *nbioServer) onData(c *nbio.Conn, data []byte) {
-	conn := s.parseConn(c)
-	if conn == nil {
-		c.Close()
-		return
-	}
-	p, err := s.parser.Parse(conn.id, bytes.NewBuffer(data))
-	if err != nil {
-		if err != packet.ErrInvalidPacket {
-			log.Errorf("reader error: %v", err)
-		}
-		return
-	}
-	s.handler.OnReceived(conn, p)
 }
 
 func (s *nbioServer) parseConn(c *nbio.Conn) *nbioConn {

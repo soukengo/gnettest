@@ -1,10 +1,11 @@
 package nbio
 
 import (
+	"bufio"
+	"bytes"
 	"github.com/google/uuid"
 	"github.com/lesismal/nbio"
 	"gnettest/pkg/server/socket/packet"
-	"io"
 	"net"
 	"sync/atomic"
 )
@@ -13,16 +14,19 @@ type nbioConn struct {
 	id     string
 	core   *nbio.Conn
 	parser *packet.Parser
-	reader io.Reader
+	buf    *bytes.Buffer
+	reader *bufio.Reader
 	closed int32
 }
 
 func newConn(gc *nbio.Conn, parser *packet.Parser) *nbioConn {
+	buf := bytes.NewBuffer([]byte{})
 	return &nbioConn{
 		id:     uuid.New().String(),
 		core:   gc,
 		parser: parser,
-		reader: gc,
+		buf:    buf,
+		reader: bufio.NewReader(buf),
 		closed: 0,
 	}
 }
