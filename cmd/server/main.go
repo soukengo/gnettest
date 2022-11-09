@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"gnettest/pkg/pprof"
-	"gnettest/pkg/server/socket/network/nbio"
+	"gnettest/pkg/server/socket/network/gnet"
 	"gnettest/pkg/server/socket/packet"
 	"os"
 	"os/signal"
@@ -23,8 +23,8 @@ func init() {
 func main() {
 	flag.Parse()
 	parser := packet.NewPacketParser(packet.NewSimplePacketFactory())
-	//s := gnet.NewServer(&gnet.Config{Address: serverAddr, SendBuf: 4096, ReadBuf: 4096, Multicore: true}, parser)
-	s := nbio.NewServer(&nbio.Config{Address: serverAddr, SendBuf: 4096, ReadBuf: 4096, Multicore: true}, parser)
+	s := gnet.NewServer(&gnet.Config{Address: serverAddr, SendBuf: 4096, ReadBuf: 4096, Multicore: true}, parser)
+	//s := nbio.NewServer(&nbio.Config{Address: serverAddr, SendBuf: 4096, ReadBuf: 4096, Multicore: true}, parser)
 	s.SetHandler(&DemoHandler{})
 	s.Start()
 	pprof.Start(pprofAddr)
