@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package gnettest.comet;
+
+option go_package = "gnettest/api/comet";
+
+message AuthRequest {
+  string uid = 1;
+}
+
+message AuthResponse {
+
+}
+message HeartBeatRequest {
+}
+
+message HeartBeatResponse {
+
+}
+
+
+message Message {
+  string content = 1;
+}
+
+message MessageList {
+  repeated Message list = 1;
+}
+
+message Empty {}
+
+message Error {
+  uint32 code = 1;
+  string message = 2;
+}

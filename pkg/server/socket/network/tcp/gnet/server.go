@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/panjf2000/gnet/v2"
 	"gnettest/pkg/server/socket/network"
+	"gnettest/pkg/server/socket/network/tcp"
 	"gnettest/pkg/server/socket/packet"
 	"sync"
 	"time"
@@ -12,14 +13,14 @@ import (
 
 type gnetServer struct {
 	id        string
-	cfg       *Config
+	cfg       *tcp.Config
 	parser    *packet.Parser
 	handler   network.Handler
 	eng       gnet.Engine
 	startOnce *sync.Once
 }
 
-func NewServer(cfg *Config, parser *packet.Parser) *gnetServer {
+func NewServer(cfg *tcp.Config, parser *packet.Parser) *gnetServer {
 	return &gnetServer{
 		id:        uuid.New().String(),
 		parser:    parser,
@@ -38,8 +39,8 @@ func (s *gnetServer) Start() (err error) {
 			err = gnet.Run(s, s.cfg.Address,
 				gnet.WithMulticore(s.cfg.Multicore),
 				gnet.WithReuseAddr(true),
-				//gnet.WithSocketSendBuffer(s.cfg.SendBuf),
-				//gnet.WithSocketRecvBuffer(s.cfg.ReadBuf),
+				gnet.WithSocketSendBuffer(s.cfg.SendBuf),
+				gnet.WithSocketRecvBuffer(s.cfg.ReadBuf),
 			)
 			if err != nil {
 				panic(err)

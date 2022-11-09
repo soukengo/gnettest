@@ -3,14 +3,12 @@ package network
 import (
 	"gnettest/pkg/server/socket/packet"
 	"net"
-	"net/url"
 )
 
 type Server interface {
 	Id() string
 	Start() error
 	Close() error
-	EndPoint() *url.URL
 	SetHandler(listener Handler)
 }
 

@@ -1,4 +1,4 @@
-package gnet
+package tcp
 
 type Config struct {
 	Address   string

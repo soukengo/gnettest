@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lesismal/nbio"
 	"gnettest/pkg/server/socket/network"
+	"gnettest/pkg/server/socket/network/tcp"
 	"gnettest/pkg/server/socket/packet"
 	"net/url"
 	"sync"
@@ -12,7 +13,7 @@ import (
 
 type nbioServer struct {
 	id        string
-	cfg       *Config
+	cfg       *tcp.Config
 	endpoint  *url.URL
 	parser    *packet.Parser
 	handler   network.Handler
@@ -20,7 +21,7 @@ type nbioServer struct {
 	startOnce *sync.Once
 }
 
-func NewServer(cfg *Config, parser *packet.Parser) network.Server {
+func NewServer(cfg *tcp.Config, parser *packet.Parser) network.Server {
 	g := nbio.NewEngine(nbio.Config{
 		Network:            "tcp",
 		Addrs:              []string{cfg.Address},
@@ -64,9 +65,6 @@ func (s *nbioServer) Close() error {
 	return nil
 }
 
-func (s *nbioServer) EndPoint() *url.URL {
-	return s.endpoint
-}
 func (s *nbioServer) SetHandler(handler network.Handler) {
 	s.handler = handler
 }
