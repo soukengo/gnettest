@@ -8,6 +8,7 @@ import (
 	"gnettest/api/comet"
 	"gnettest/internal/comet/model"
 	"golang.org/x/net/context"
+	"golang.org/x/time/rate"
 	"net"
 	"os"
 	"os/signal"
@@ -18,11 +19,14 @@ import (
 
 var (
 	protocol   = "tcp"
-	serverAddr = ":5311"
+	serverAddr = "serverIp:5311"
 )
 
 var (
-	size = int64(100)
+	// 客户端总数量
+	size = int64(8000)
+	// 创建客户端的并发
+	netClientRate = 200
 )
 
 func init() {
@@ -36,10 +40,16 @@ func main() {
 		size, _ = strconv.ParseInt(os.Args[1], 10, 64)
 	}
 	ctx, cancel := context.WithCancel(context.TODO())
+	limiter := rate.NewLimiter(rate.Every(time.Millisecond*time.Duration(1000/netClientRate)), 1)
 	for i := int64(0); i < size; i++ {
 		uid := strconv.FormatInt(i, 10)
-		newClient(ctx, uid)
+		err := limiter.Wait(ctx)
+		if err != nil {
+			panic(err)
+		}
+		go newClient(ctx, uid)
 	}
+
 	waitShutdown(func() {
 		cancel()
 	})

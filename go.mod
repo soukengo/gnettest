@@ -13,6 +13,7 @@ require (
 	github.com/zhenjl/cityhash v0.0.0-20131128155616-cdd6a94144ab
 	go.uber.org/atomic v1.10.0
 	golang.org/x/net v0.1.0
+	golang.org/x/time v0.2.0
 	google.golang.org/protobuf v1.28.0
 )
 
