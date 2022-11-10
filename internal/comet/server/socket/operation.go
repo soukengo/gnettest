@@ -17,7 +17,7 @@ func (s *Server) Auth(ctx context.Context, ch *Channel, p *model.Packet) (res *c
 		return
 	}
 	// 模拟rpc请求
-	time.Sleep(time.Millisecond * 100)
+	time.Sleep(time.Millisecond * 50)
 	ch.Uid = req.Uid
 
 	ch.Enable(time.Minute*5, func() {

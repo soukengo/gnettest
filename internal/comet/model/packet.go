@@ -53,7 +53,7 @@ func (p *Packet) UnPackFrom(r io.Reader) (err error) {
 	p.Code = binary.BigEndian.Uint16(buf[codeOffset:headerSize])
 
 	buf, _ = bio.Peek(packetLen)
-	if len(buf) < packetLen {
+	if len(buf) < headerSize {
 		return packet.ErrInvalidPacket
 	}
 	var body []byte
